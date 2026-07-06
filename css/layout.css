@@ -257,3 +257,114 @@
 
 .page--livret { max-width: none; }
 .page--livret .page-prose { max-width: 44rem; }
+
+/* == Le médiateur ================================================= */
+
+.mediator {
+  position: fixed;
+  right: clamp(0.8rem, 2.5vw, 2rem);
+  bottom: clamp(0.8rem, 2.5vw, 2rem);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.7rem;
+}
+
+.mediator-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.65rem 1.1rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  box-shadow: 0 8px 22px rgba(43, 36, 24, 0.28);
+  transition: transform 0.2s ease;
+}
+.mediator-toggle:hover { transform: translateY(-2px); }
+
+.mediator-panel {
+  width: min(21rem, calc(100vw - 2rem));
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-art);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mediator-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--paper-deep);
+}
+.mediator-name { font-family: var(--serif); margin: 0; font-size: 0.95rem; }
+.mediator-status {
+  margin: 0;
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.mediator-close { color: var(--muted); font-size: 0.85rem; }
+.mediator-close:hover { color: var(--ink); }
+
+.mediator-messages {
+  height: 15rem;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.mediator-msg {
+  margin: 0;
+  max-width: 88%;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.mediator-msg--bot {
+  align-self: flex-start;
+  background: var(--paper-deep);
+  border-left: 2px solid var(--accent);
+}
+.mediator-msg--visitor {
+  align-self: flex-end;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.mediator-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 1rem 0.7rem;
+}
+.mediator-chip {
+  border: 1px solid var(--hairline);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  color: var(--ink-soft);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.mediator-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+.mediator-form {
+  display: flex;
+  border-top: 1px solid var(--hairline);
+}
+.mediator-input {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.mediator-input:focus { outline: none; background: var(--paper-deep); }
+.mediator-send { padding: 0 1rem; color: var(--ink-soft); }
+.mediator-send:hover { color: var(--accent); }

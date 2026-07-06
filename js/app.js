@@ -4,6 +4,7 @@ import { startRouter } from './router.js';
 import { renderFloorplan } from './ui/floorplan.js';
 import { renderRoom } from './ui/room.js';
 import { renderPage } from './ui/pages.js';
+import { renderMediator } from './ui/mediator.js';
 
 const view = document.getElementById('view');
 let current = { destroy() {} };
@@ -25,6 +26,8 @@ function highlightNav(route) {
 document.getElementById('footer-name').textContent = CONFIG.name;
 const gh = document.getElementById('footer-github');
 gh.href = CONFIG.githubUrl;
+
+renderMediator(document.getElementById('mediator-root'));
 
 startRouter(route => {
   highlightNav(route);
