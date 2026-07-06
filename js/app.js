@@ -3,6 +3,7 @@ import { CONFIG } from './data/config.js';
 import { startRouter } from './router.js';
 import { renderFloorplan } from './ui/floorplan.js';
 import { renderRoom } from './ui/room.js';
+import { renderPage } from './ui/pages.js';
 
 const view = document.getElementById('view');
 let current = { destroy() {} };
@@ -28,5 +29,6 @@ gh.href = CONFIG.githubUrl;
 startRouter(route => {
   highlightNav(route);
   if (route.view === 'room') mount(container => renderRoom(container, route.day));
-  else mount(container => renderFloorplan(container)); // pages branchées en Task 12
+  else if (route.view === 'page') mount(container => renderPage(container, route.page));
+  else mount(container => renderFloorplan(container));
 });
