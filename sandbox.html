@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sandbox sketches — vérification visuelle</title>
+  <style>
+    body { font-family: ui-monospace, monospace; background: #faf8f4; margin: 2rem; }
+    .grid { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    figure { margin: 0; }
+    figcaption { font-size: 12px; margin-top: 4px; color: #57524a; }
+    canvas { box-shadow: 0 8px 24px rgba(43,36,24,0.18); }
+  </style>
+</head>
+<body>
+  <h1 style="font-size:1rem">Sandbox — ?from=1&amp;to=8</h1>
+  <div class="grid" id="grid"></div>
+  <script type="module">
+    import { runSketch } from './js/core/canvas.js';
+    const params = new URLSearchParams(location.search);
+    const from = Number(params.get('from') || 1);
+    const to = Number(params.get('to') || 31);
+    const grid = document.getElementById('grid');
+    for (let day = from; day <= to; day++) {
+      const id = `jan-${String(day).padStart(2, '0')}`;
+      const fig = document.createElement('figure');
+      const canvas = document.createElement('canvas');
+      const cap = document.createElement('figcaption');
+      cap.textContent = id;
+      fig.append(canvas, cap);
+      grid.append(fig);
+      try {
+        const mod = await import(`./js/sketches/${id}.js`);
+        runSketch(canvas, mod.default, { seed: id, cssWidth: 420, cssHeight: 420 });
+        cap.textContent += mod.default.animated ? ' · animé' : ' · statique';
+      } catch (err) {
+        cap.textContent += ` — ERREUR : ${err.message}`;
+        cap.style.color = '#b5442c';
+        console.error(id, err);
+      }
+    }
+  </script>
+</body>
+</html>
