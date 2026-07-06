@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GENUARY 2025 — Une exposition · Mattéo Marchelli</title>
+  <meta name="description" content="31 œuvres génératives pour Genuary 2025, présentées comme une exposition : plan de salle, cartels, livret imprimable et médiateur.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+</head>
+<body>
+  <header class="museum-header">
+    <a class="museum-mark" href="#/" aria-label="Retour au plan de la collection">
+      <span class="museum-mark-title">GENUARY 2025</span>
+      <span class="museum-mark-sub">une exposition</span>
+    </a>
+    <nav class="museum-nav" aria-label="Navigation principale">
+      <a href="#/" data-route="plan">Le plan</a>
+      <a href="#/artiste" data-route="artiste">L’artiste</a>
+      <a href="#/exposition" data-route="exposition">L’exposition</a>
+      <a href="#/livret" data-route="livret">Le livret</a>
+      <a href="#/contact" data-route="contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="view" tabindex="-1"><!-- monté par js/app.js --></main>
+
+  <div id="mediator-root"><!-- monté par js/ui/mediator.js --></div>
+
+  <footer class="museum-footer">
+    <span id="footer-name"></span>
+    <span>Genuary 2025 · Veille &amp; Techno · IIMB3</span>
+    <a id="footer-github" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

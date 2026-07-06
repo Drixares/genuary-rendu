@@ -1,0 +1,40 @@
+/* Mise en page du musée — header/footer (Task 1), plan (Task 10),
+   salle (Task 11), pages (Task 12), médiateur (Task 13). */
+
+.museum-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.4rem clamp(1.2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.museum-mark { text-decoration: none; display: flex; flex-direction: column; }
+.museum-mark-title { font-family: var(--serif); font-size: 1.15rem; letter-spacing: 0.14em; }
+.museum-mark-sub { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.3em; text-transform: uppercase; }
+
+.museum-nav { display: flex; gap: 1.4rem; flex-wrap: wrap; }
+.museum-nav a {
+  text-decoration: none;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.museum-nav a:hover { color: var(--ink); }
+.museum-nav a.is-active { color: var(--ink); border-bottom-color: var(--accent); }
+
+.museum-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.2rem clamp(1.2rem, 4vw, 3rem);
+  border-top: 1px solid var(--hairline);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.museum-footer a { color: var(--ink-soft); text-decoration: none; }
