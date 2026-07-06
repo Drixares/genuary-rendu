@@ -91,3 +91,108 @@
 }
 .tile-anim { color: var(--muted); font-size: 0.6rem; vertical-align: 1px; }
 .tile-fav { color: var(--accent); font-size: 0.6rem; vertical-align: 1px; }
+
+/* == La salle ===================================================== */
+
+.room {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 330px);
+  gap: clamp(1.4rem, 3vw, 3rem);
+  align-items: center;
+  padding: clamp(1.4rem, 3vw, 2.6rem) clamp(1.2rem, 4vw, 3rem);
+  min-height: calc(100vh - 190px);
+}
+
+.room-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.6rem, 2vw, 1.6rem);
+  min-width: 0;
+}
+
+.room-art {
+  width: min(66vh, 700px, 100%);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.room-art canvas {
+  box-shadow: var(--shadow-art);
+  background: var(--paper-deep);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.room-nav {
+  font-size: 1.5rem;
+  color: var(--muted);
+  padding: 0.8rem 0.6rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+.room-nav:hover { color: var(--ink); transform: scale(1.15); }
+
+.room-cartel {
+  border-left: 1px solid var(--hairline);
+  padding-left: clamp(1.2rem, 2.5vw, 2rem);
+  font-size: 0.92rem;
+}
+.cartel-day {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+.cartel-title { font-size: clamp(1.5rem, 2.6vw, 2.1rem); margin-bottom: 0.9rem; }
+.cartel-prompt {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+.cartel-credit { font-size: 0.78rem; font-style: normal; color: var(--muted); }
+.cartel-note { color: var(--ink-soft); margin: 0 0 1.1rem; line-height: 1.65; }
+.cartel-technique {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0 0 1.4rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.cartel-seed {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0 0 1.6rem;
+}
+.cartel-seed-label { color: var(--muted); }
+.cartel-reseed {
+  border: 1px solid var(--hairline);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.cartel-reseed:hover { border-color: var(--accent); color: var(--accent); }
+.cartel-back {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+.cartel-back:hover { color: var(--ink); }
+
+@media (max-width: 860px) {
+  .room { grid-template-columns: 1fr; min-height: 0; }
+  .room-cartel { border-left: none; padding-left: 0; border-top: 1px solid var(--hairline); padding-top: 1.4rem; }
+  .room-art { width: min(80vw, 480px); }
+}

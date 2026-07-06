@@ -2,6 +2,7 @@
 import { CONFIG } from './data/config.js';
 import { startRouter } from './router.js';
 import { renderFloorplan } from './ui/floorplan.js';
+import { renderRoom } from './ui/room.js';
 
 const view = document.getElementById('view');
 let current = { destroy() {} };
@@ -26,6 +27,6 @@ gh.href = CONFIG.githubUrl;
 
 startRouter(route => {
   highlightNav(route);
-  // Les vues salle et pages sont branchées par les tasks suivantes
-  mount(container => renderFloorplan(container));
+  if (route.view === 'room') mount(container => renderRoom(container, route.day));
+  else mount(container => renderFloorplan(container)); // pages branchées en Task 12
 });
