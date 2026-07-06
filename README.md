@@ -1,194 +1,125 @@
-# GENUARY 2025 — Site éditorial
+# GENUARY 2025 — Une exposition
 
-Site final autour des 31 sketches Genuary 2025, avec chatbot non-IA et section Big Zine.
+31 œuvres génératives pour [Genuary 2025](https://genuary.art), présentées comme
+un musée numérique : un plan de la collection, des salles avec cartels, un livret
+imprimable et un médiateur scripté (sans IA).
 
----
-
-## Concept
-
-Ce projet regroupe :
-- **31 sketches** Canvas 2D en JavaScript vanilla, réalisés chaque jour de janvier 2025 pour le challenge [Genuary](https://genuary.art)
-- **Un site éditorial expérimental** qui les présente avec une interface asymétrique, typographiée et filtrable
-- **Un chatbot non-IA scripté** (aucun appel API, logique entièrement écrite à la main)
-- **Une section Big Zine** préparée pour l'impression saddle-stitched, avec `@media print` dédié
+Projet réalisé par **Mattéo Marchelli** dans le cadre du cours Veille & Techno — IIM B3.
 
 ---
+
+## Le concept
+
+Le site est une exposition :
+
+| Salle du musée   | Ce que c'est |
+|------------------|--------------|
+| **Le plan** (`#/`)          | Mosaïque des 31 vignettes génératives, rendues paresseusement ; les œuvres animées s'animent au survol |
+| **Les salles** (`#/jour/07`) | Une œuvre plein écran + son cartel (prompt officiel, note d'intention, technique, seed) ; navigation ← → au clavier, bouton « Régénérer » |
+| **L'artiste** (`#/artiste`)  | Bio |
+| **L'exposition** (`#/exposition`) | Le challenge Genuary et les contraintes choisies |
+| **Le livret** (`#/livret`)   | Édition imprimable A4 : couverture, les 31 œuvres capturées à la volée, textes, QR code |
+| **Contact** (`#/contact`)    | Email, GitHub, site |
+| **Le médiateur** (bouton flottant) | Chatbot non-IA écrit à la main ; il répond et peut guider la visite (« surprends-moi » téléporte dans une salle) |
+
+Les 31 prompts sont les **prompts officiels Genuary 2025**, reproduits verbatim
+sur les cartels avec leurs crédits.
 
 ## Lancer le site
 
-Le site est entièrement statique — il suffit d'un serveur HTTP local pour que les modules ES6 fonctionnent.
+Site 100 % statique, zéro dépendance, zéro build. Les modules ES exigent juste
+un serveur HTTP :
 
-**Option 1 — Node.js :**
 ```bash
-npx serve .
+python3 -m http.server 8000     # ou : npx serve .
+# → http://localhost:8000
 ```
 
-**Option 2 — Python :**
+## Lancer les tests
+
+La logique pure (PRNG, données, routeur, intents du médiateur, contrat des
+31 sketches) est testée avec le runner intégré de Node (≥ 18) :
+
 ```bash
-python -m http.server 8000
+node --test tests/*.test.mjs
 ```
 
-**Option 3 — VS Code Live Server :**
-Clic droit sur `index.html` → "Open with Live Server"
-
-> Ouvrir directement `index.html` avec `file://` peut bloquer les modules ES6 dans certains navigateurs.
-
----
-
-## Structure du projet
+## Architecture
 
 ```
-GENUARY_2025_IIMB3/
-├── index.html                 ← site final (SPA sections)
-├── README.md
-├── css/
-│   └── style.css              ← design éditorial + @media print
-├── js/
-│   ├── genuary-data.js        ← CONFIG + 31 entrées de données
-│   ├── main.js                ← navigation, rendu cartes, filtres, lightbox
-│   └── chatbot.js             ← chatbot non-IA scripté
-├── assets/
-│   ├── images/
-│   │   ├── geometric-zine.svg ← dessin vectoriel zine (placeholder)
-│   │   └── raster-01…10.jpg  ← images raster zine (placeholders)
-│   └── icons/
-│       └── favicon.svg
-├── prompts/                   ← 31 sketches Genuary (existants, non modifiés)
-│   ├── sketch.js
-│   └── jan-01.html … jan-31.html
-└── chatbot/                   ← archive chatbot RiveScript (non lié)
+index.html                  coquille : header, <main id="view">, footer
+css/
+  base.css                  jetons de design (white cube), reset, typographie
+  layout.css                plan, salle, pages, médiateur, aperçu livret
+  print.css                 le livret en A4 (seul contenu imprimé)
+js/
+  app.js                    bootstrap : routeur → montage des vues
+  router.js                 parseHash pur + startRouter (#/jour/NN, #/artiste…)
+  data/
+    config.js               identité (nom, email, GitHub, site, œuvre favorite)
+    exhibition.js           les 31 entrées : prompt officiel, titre, note, technique
+  core/
+    prng.js                 PRNG seedé (fnv1a + mulberry32) — même seed, même image
+    canvas.js               fitCanvas (DPR), runSketch (boucle rAF / frame unique)
+    intents.js              le cerveau du médiateur (matching mots-clés, pur)
+  sketches/
+    index.js                registre Map des 31 modules
+    jan-01.js … jan-31.js   une œuvre = un module
+  ui/
+    floorplan.js            la mosaïque (IntersectionObserver, survol animé)
+    room.js                 la salle (cartel, clavier, régénération de seed)
+    pages.js                artiste / exposition / livret / contact
+    mediator.js             le widget du médiateur
+tests/                      node --test (prng, données, routeur, intents, sketches)
+assets/
+  icons/favicon.svg
+  images/qr-code.png        QR réel vers matteo-marchelli.com
 ```
 
----
+## Le contrat d'un sketch
 
-## Personnaliser la configuration
+Chaque œuvre est un module indépendant :
 
-Tout part d'un seul endroit : le bloc `CONFIG` en tête de [`js/genuary-data.js`](js/genuary-data.js).
-
-```javascript
-export const CONFIG = {
-  studentName:       "Ton Nom",          // ton vrai nom
-  role:              "creative coder / generative artist / student",
-  githubUrl:         "https://github.com/tonprofil",
-  contactEmail:      "tonmail@example.com",
-  siteUrl:           "https://tonsite.com",
-  favoriteGenuaryId: "jan-24",           // id de ton sketch préféré
+```js
+// js/sketches/jan-32.js (exemple d'ajout)
+export default {
+  animated: false,                 // true = boucle requestAnimationFrame
+  draw(ctx, w, h, rand, t) {       // t en secondes, rand = PRNG seedé recréé à chaque frame
+    ctx.fillStyle = '#f5f1e8';
+    ctx.fillRect(0, 0, w, h);
+  },
 };
 ```
 
-Ces valeurs se propagent automatiquement dans la splash, la section About Me, le footer, les contacts et le chatbot.
+Règles :
 
----
+- **Déterminisme** : `rand` est recréé depuis la seed à chaque frame — consommer
+  les tirages dans le même ordre à chaque frame, et n'utiliser que `t` pour le
+  mouvement. Même seed ⇒ même image, y compris en animation.
+- **Pas de DOM au niveau module** : les modules sont importés sous Node par les
+  tests. (`OffscreenCanvas`/`ImageData` dans `draw` sont shimés par le smoke test.)
+- Déclarer le module dans `js/sketches/index.js` et ses métadonnées dans
+  `js/data/exhibition.js`.
 
-## Brancher les URLs des 31 sketches
+## Personnaliser
 
-Dans `js/genuary-data.js`, chaque entrée a un champ `url` :
+Tout part de `js/data/config.js` : nom, rôle, email, GitHub, site, et
+`favoriteId` (l'œuvre marquée d'un point rouge sur le plan, cible de la question
+« ta préférée ? » du médiateur).
 
-```javascript
-// BRANCHER ICI : remplacer url si sketch hébergé ailleurs
-url: "prompts/jan-01.html",
-```
+## Imprimer le livret
 
-Par défaut, les URLs pointent vers `prompts/jan-XX.html` (relatif depuis la racine). Une fois le site déployé, remplace chaque `url` par l'URL absolue du sketch hébergé :
+Aller sur **Le livret** (`#/livret`) puis `Cmd/Ctrl + P` (ou le bouton
+« Imprimer le livret »). La feuille `css/print.css` compose un A4 : couverture,
+mosaïque des 31 captures (générées à l'instant depuis les canvas), textes et QR
+code. Activer « Imprimer les arrière-plans » pour les œuvres sombres.
 
-```javascript
-url: "https://tonsite.com/prompts/jan-01.html",
-```
+## Accessibilité
 
----
+- `prefers-reduced-motion: reduce` : aucune boucle d'animation, frame fixe.
+- Navigation clavier dans les salles (`←` `→` `Échap`), ARIA sur les contrôles.
 
-## Modifier les données des 31 Genuary
+## Crédits
 
-Chaque projet dans le tableau `GENUARY_PROJECTS` peut être édité :
-
-| Champ             | Rôle                                                        |
-|-------------------|-------------------------------------------------------------|
-| `title`           | Titre du prompt Genuary (en anglais)                        |
-| `shortDescription`| Description courte en français (1 phrase)                   |
-| `tags`            | Mots-clés pour les filtres (`gradient`, `pixel`, `animation`, etc.) |
-| `mood`            | Adjectif éditorial utilisé pour le filtre et le chatbot     |
-| `animated`        | `true` si le sketch tourne en boucle, `false` s'il est statique |
-| `credit`          | Nom de crédits affiché                                      |
-| `url`             | Lien vers le sketch (voir ci-dessus)                        |
-
----
-
-## Personnaliser le chatbot
-
-Le chatbot (`js/chatbot.js`) fonctionne sans aucune IA — tout est écrit à la main.
-
-**Ajouter un intent :**
-
-```javascript
-{
-  id: 'mon-intent',
-  keywords: ['mot1', 'mot2', 'phrase complete'],
-  responses: [
-    "Première réponse possible.",
-    "Deuxième réponse, utilisée en rotation.",
-  ],
-},
-```
-
-Placer l'intent dans le tableau `INTENTS` **avant** l'entrée `fallback`.
-
-**Changer les suggestions rapides :**
-
-Modifier le tableau `SUGGESTIONS` en tête de `chatbot.js` :
-
-```javascript
-const SUGGESTIONS = [
-  { label: "Mon label", text: "texte envoyé au bot" },
-  ...
-];
-```
-
-**Changer la personnalité / les réponses :** chaque intent a un tableau `responses` — modifier directement les textes.
-
----
-
-## Utiliser la section Print / Zine
-
-### 1. Remplacer le dessin vectoriel
-
-Remplacer `assets/images/geometric-zine.svg` par ton propre dessin vectoriel. Le `<img>` dans `index.html` le chargera automatiquement.
-
-### 2. Remplacer les 10 images raster
-
-Remplacer les fichiers `assets/images/raster-01.jpg` … `raster-10.jpg` par tes vraies captures ou exports des sketches. Le format JPG/PNG fonctionne — les placeholders actuels sont des SVG renommés.
-
-### 3. Imprimer le big zine (Ctrl+P)
-
-La section `#print-zine` est la seule visible à l'impression. Le `@media print` dans `style.css` :
-- Masque navigation, chatbot, splash
-- Force fond blanc, texte noir, marges 2cm (A4)
-- Organise vectoriel + 10 raster + textes About + QR en grille
-
-Pour imprimer depuis le navigateur : aller à la section Zine, puis `Ctrl+P` (ou `Cmd+P`). Pour un rendu optimal, utiliser Chrome ou Edge et cocher "Graphiques d'arrière-plan".
-
-### 4. Générer le vrai QR code
-
-Remplacer le QR SVG placeholder dans `index.html` par un vrai QR code généré depuis `siteUrl`. Service libre : [https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TON_URL](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://tonsite.com)
-
-Télécharger le PNG et le placer dans `assets/images/qr-code.png`, puis remplacer le SVG dans `index.html` par :
-
-```html
-<img src="assets/images/qr-code.png" alt="QR code vers le site" class="qr-svg">
-```
-
----
-
-## Ajouter un lien retour dans les sketches
-
-Pour que chaque sketch `prompts/jan-XX.html` propose un retour vers le site, ajouter dans le `<main>` de chaque fichier :
-
-```html
-<a href="../index.html#genuary" style="font-family:monospace;font-size:0.8rem;color:#8aa0b3;display:block;margin-bottom:1rem">← Retour au site</a>
-```
-
----
-
-## Crédits & Licence
-
-Sketches et site réalisés dans le cadre du cours Veille & Techno — IIMB3.  
-Challenge Genuary : [genuary.art](https://genuary.art)
+- Prompts © [genuary.art](https://genuary.art) et leurs auteurs (crédités sur chaque cartel).
+- Sketches, site et textes : Mattéo Marchelli — cours Veille & Techno, IIM B3.

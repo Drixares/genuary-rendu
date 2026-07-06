@@ -282,6 +282,7 @@
 }
 .mediator-toggle:hover { transform: translateY(-2px); }
 
+.mediator-panel[hidden] { display: none; }
 .mediator-panel {
   width: min(21rem, calc(100vw - 2rem));
   background: var(--paper);
