@@ -1,0 +1,107 @@
+/* Le livret — feuille d'impression A4.
+   Seul le contenu de .booklet s'imprime ; le reste du musée disparaît.
+   Imprimer depuis la page « Le livret » (#/livret), où le DOM du livret existe. */
+
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
+body { background: #fff; }
+body * { visibility: hidden; }
+.booklet, .booklet * { visibility: visible; }
+
+.booklet {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  color: #111;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Neutralise l'habillage de l'aperçu écran */
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+
+/* -- Couverture : une page entière -------------------------------- */
+.booklet-cover {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  break-after: page;
+  page-break-after: always;
+}
+.booklet-kicker {
+  font-size: 10pt;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #888;
+  margin: 0 0 6mm;
+}
+.booklet-title {
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-size: 56pt;
+  line-height: 1.02;
+  margin: 0 0 10mm;
+}
+.booklet-author { font-size: 14pt; margin: 0 0 2mm; }
+.booklet-meta { font-size: 9pt; color: #666; margin: 0; }
+
+/* -- Les 31 œuvres ------------------------------------------------- */
+.booklet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6mm 5mm;
+}
+.booklet-grid figure {
+  margin: 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.booklet-grid img {
+  width: 100%;
+  aspect-ratio: 1;
+  display: block;
+}
+.booklet-grid figcaption {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 7pt;
+  color: #444;
+  margin-top: 1.5mm;
+}
+
+/* -- Textes -------------------------------------------------------- */
+.booklet-texts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10mm;
+  margin-top: 12mm;
+  padding-top: 6mm;
+  border-top: 0.4pt solid #999;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.booklet-texts h3 {
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-size: 12pt;
+  margin: 0 0 2mm;
+}
+.booklet-texts p { font-size: 9pt; line-height: 1.55; margin: 0; color: #333; }
+
+/* -- Colophon + QR -------------------------------------------------- */
+.booklet-colophon {
+  display: flex;
+  align-items: center;
+  gap: 8mm;
+  margin-top: 10mm;
+  padding-top: 6mm;
+  border-top: 0.4pt solid #999;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.booklet-qr { width: 26mm; height: 26mm; }
+.booklet-colophon p { font-size: 9pt; line-height: 1.6; margin: 0; }
+.booklet-colophon-small { font-size: 7pt; color: #777; }

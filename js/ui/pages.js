@@ -1,5 +1,8 @@
 // Les pages du musée : l'artiste, l'exposition, le livret, contact.
 import { CONFIG } from '../data/config.js';
+import { EXHIBITION } from '../data/exhibition.js';
+import { SKETCHES } from '../sketches/index.js';
+import { runSketch } from '../core/canvas.js';
 
 const PAGES = {
   artiste: () => `
@@ -80,7 +83,35 @@ const PAGES = {
         </p>
       </div>
       <div class="booklet" id="booklet" aria-label="Aperçu du livret imprimable">
-        <!-- Rempli par la génération des captures (voir print) -->
+        <section class="booklet-cover">
+          <p class="booklet-kicker">une exposition</p>
+          <h2 class="booklet-title">GENUARY<br>2025</h2>
+          <p class="booklet-author">${CONFIG.name}</p>
+          <p class="booklet-meta">31 œuvres génératives · janvier 2025 · Veille &amp; Techno · IIM B3</p>
+        </section>
+        <section class="booklet-grid" id="booklet-grid"></section>
+        <section class="booklet-texts">
+          <div>
+            <h3>L’artiste</h3>
+            <p>${CONFIG.name}, ${CONFIG.role}. Genuary 2025 est son premier défi
+            public de creative coding : un prompt par jour, une image par jour,
+            sans librairie et sans filet.</p>
+          </div>
+          <div>
+            <h3>L’exposition</h3>
+            <p>31 réponses aux prompts officiels de genuary.art, en Canvas 2D natif
+            et JavaScript vanilla. Chaque œuvre est seedée et reproductible : le
+            même seed produit toujours la même image.</p>
+          </div>
+        </section>
+        <section class="booklet-colophon">
+          <img class="booklet-qr" src="assets/images/qr-code.png" alt="QR code vers ${CONFIG.siteUrl}">
+          <p>
+            L’exposition continue en ligne —<br>
+            <strong>${CONFIG.siteUrl.replace('https://', '')}</strong><br>
+            <span class="booklet-colophon-small">Captures générées à l’impression · prompts © genuary.art</span>
+          </p>
+        </section>
       </div>
     </article>
   `,
@@ -107,6 +138,35 @@ const PAGES = {
   `,
 };
 
+// Capture chaque œuvre sur un canvas hors écran → <img> pour l'impression.
+// Par petits lots pour ne pas geler la page.
+function buildBookletCaptures(grid) {
+  let cancelled = false;
+  const entries = [...EXHIBITION];
+
+  const captureBatch = () => {
+    if (cancelled) return;
+    for (const e of entries.splice(0, 4)) {
+      const canvas = document.createElement('canvas');
+      runSketch(canvas, SKETCHES.get(e.id), {
+        seed: e.id, cssWidth: 300, cssHeight: 300, animate: false, at: 6.5,
+      });
+      const fig = document.createElement('figure');
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL('image/png');
+      img.alt = `${e.title} — jour ${e.day}`;
+      const cap = document.createElement('figcaption');
+      cap.textContent = `${String(e.day).padStart(2, '0')} · ${e.title}`;
+      fig.append(img, cap);
+      grid.append(fig);
+    }
+    if (entries.length) setTimeout(captureBatch, 16);
+  };
+  captureBatch();
+
+  return () => { cancelled = true; };
+}
+
 export function renderPage(container, page) {
   const wrapper = document.createElement('div');
   wrapper.className = 'page-wrapper';
@@ -115,5 +175,9 @@ export function renderPage(container, page) {
 
   wrapper.querySelector('#print-booklet')?.addEventListener('click', () => print());
 
-  return { destroy() {} };
+  let cancelCaptures = null;
+  const grid = wrapper.querySelector('#booklet-grid');
+  if (grid) cancelCaptures = buildBookletCaptures(grid);
+
+  return { destroy() { cancelCaptures?.(); } };
 }
