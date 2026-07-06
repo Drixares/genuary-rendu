@@ -35,6 +35,7 @@ body {
 }
 
 main { flex: 1; }
+main:focus { outline: none; }
 
 h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.15; margin: 0; }
 

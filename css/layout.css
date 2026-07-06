@@ -38,3 +38,56 @@
   color: var(--muted);
 }
 .museum-footer a { color: var(--ink-soft); text-decoration: none; }
+
+/* == Le plan de la collection ==================================== */
+
+.floorplan { padding: clamp(1.6rem, 4vw, 3.4rem) clamp(1.2rem, 4vw, 3rem) 4rem; }
+
+.floorplan-header { margin-bottom: 2.4rem; max-width: 40rem; }
+.floorplan-title { font-size: clamp(1.7rem, 4vw, 2.6rem); }
+.floorplan-sub {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.floorplan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 2.2rem 1.6rem;
+}
+
+.tile { text-decoration: none; display: block; }
+
+.tile-frame {
+  aspect-ratio: 1;
+  background: var(--paper-deep);
+  box-shadow: 0 10px 26px rgba(43, 36, 24, 0.12), 0 2px 6px rgba(43, 36, 24, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+.tile:hover .tile-frame,
+.tile:focus-visible .tile-frame {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-art);
+}
+/* Prime sur les dimensions inline posées par fitCanvas : la vignette
+   suit toujours sa case, même si la grille se recompose. */
+.tile-frame canvas { width: 100% !important; height: 100% !important; }
+
+.tile-caption {
+  display: block;
+  margin-top: 0.65rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+.tile-day {
+  font-family: var(--mono);
+  color: var(--muted);
+  margin-right: 0.3rem;
+}
+.tile-anim { color: var(--muted); font-size: 0.6rem; vertical-align: 1px; }
+.tile-fav { color: var(--accent); font-size: 0.6rem; vertical-align: 1px; }

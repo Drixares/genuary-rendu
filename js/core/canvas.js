@@ -22,12 +22,12 @@ export function prefersReducedMotion() {
 
 // Rend un sketch dans un canvas. Retourne { stop } pour couper la boucle
 // avant de démonter la vue (sinon les rAF s'accumulent en naviguant).
-export function runSketch(canvas, sketch, { seed, cssWidth, cssHeight, animate = true } = {}) {
+export function runSketch(canvas, sketch, { seed, cssWidth, cssHeight, animate = true, at = 0 } = {}) {
   const ctx = fitCanvas(canvas, cssWidth, cssHeight);
   const frame = t => sketch.draw(ctx, cssWidth, cssHeight, makeRand(seed), t);
 
   if (!sketch.animated || !animate || prefersReducedMotion()) {
-    frame(0);
+    frame(sketch.animated ? at : 0);
     return { stop() {} };
   }
 
